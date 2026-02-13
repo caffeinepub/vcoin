@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
+  "projectStateVersion": 5,
   "summary": "VCoin: a Web2-style presale/admin dashboard site (no on-chain smart contracts) that manually manages presale stages, user deposits (tx hash + screenshot), referral rewards, locked balances/vesting calculations, and an admin-controlled wallet address shown instantly on the buy page. Email/OTP verification not available; prevent duplicate registrations via unique email + device/IP/browser checks.",
   "architectural_notes": [
     "No blockchain integration; system is Web2/manual control only (informational tokenomics/contract docs allowed, not deployable contracts).",
@@ -8,10 +8,10 @@
     "Admin-controlled USDT wallet address is stored server-side and fetched by Buy page to reflect changes immediately."
   ],
   "known_issues": [
-    "Build attempt failed previously; user requested a retry."
+    "Build attempt failed previously; user requested a retry.",
+    "Deployed site shows a blank page / nothing renders for the user."
   ],
   "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- VCoin token-style circular logo with 'VCN' monogram, metallic gold on dark background (vcoin-logo.dim_512x512.png)\n- Simple favicon version of the VCoin mark, high contrast (vcoin-favicon.dim_64x64.png)\n- Abstract futuristic finance background with subtle grid and light streaks, dark theme (vcoin-hero-bg.dim_1920x1080.png)",
   "existing_features": [
     {
       "id": "feature-build-a-full-working-vcoin-website-with-two-protected-areas-1-user-panel-and-2-admin-panel-all-backed-by-motoko-canister-storage-the-system-must-be-web2-style-no-on-chain-smart-contracts-no-wallet-integrations-but-should-feel-realistic-and-production-like",
@@ -130,6 +130,22 @@
       "title": "Add generated static brand assets and use them in the UI: VCoin logo, favicon, and a subtle dashboard/public hero background illustration. Store these in frontend/public/assets/generated and reference them directly from the frontend.",
       "reqIds": [
         "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-tanstack-router-configuration-in-frontend-src-app-tsx-so-the-app-renders-routes-instead-of-a-blank-screen-specifically-do-not-render-a-routerprovider-inside-the-createrootroute-component-it-references-router-before-initialization-and-also-nests-a-second-routerprovider-the-root-route-component-must-render-the-routed-content-e-g-via-the-router-s-outlet-pattern-and-keep-global-wrappers-like-themeprovider-and-toaster-around-it-while-routerprovider-is-rendered-only-once-in-app",
+      "title": "Fix the TanStack Router configuration in `frontend/src/App.tsx` so the app renders routes instead of a blank screen. Specifically: do not render a `RouterProvider` inside the `createRootRoute` component (it references `router` before initialization and also nests a second RouterProvider). The root route component must render the routed content (e.g., via the router's Outlet pattern) and keep global wrappers like `ThemeProvider` and `Toaster` around it, while `RouterProvider` is rendered only once (in `App`).",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-application-level-user-friendly-error-fallback-for-unexpected-client-runtime-failures-during-app-initialization-render-so-users-do-not-see-a-blank-screen-the-fallback-must-display-a-simple-english-message-and-a-basic-recovery-action-e-g-reload-page-and-it-must-not-leak-sensitive-details",
+      "title": "Add an application-level user-friendly error fallback for unexpected client runtime failures during app initialization/render (so users do not see a blank screen). The fallback must display a simple English message and a basic recovery action (e.g., reload page), and it must not leak sensitive details.",
+      "reqIds": [
+        "REQ-18"
       ],
       "version": 1
     }

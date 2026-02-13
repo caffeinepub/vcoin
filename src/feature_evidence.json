@@ -2,16 +2,32 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-build-a-full-working-vcoin-website-with-two-protected-areas-1-user-panel-and-2-admin-panel-all-backed-by-motoko-canister-storage-the-system-must-be-web2-style-no-on-chain-smart-contracts-no-wallet-integrations-but-should-feel-realistic-and-production-like",
-      "featureTitle": "Build a full working VCoin website with two protected areas: (1) User Panel and (2) Admin Panel, all backed by Motoko canister storage. The system must be Web2-style (no on-chain smart contracts, no wallet integrations) but should feel realistic and production-like.",
+      "featureId": "feature-fix-the-tanstack-router-configuration-in-frontend-src-app-tsx-so-the-app-renders-routes-instead-of-a-blank-screen-specifically-do-not-render-a-routerprovider-inside-the-createrootroute-component-it-references-router-before-initialization-and-also-nests-a-second-routerprovider-the-root-route-component-must-render-the-routed-content-e-g-via-the-router-s-outlet-pattern-and-keep-global-wrappers-like-themeprovider-and-toaster-around-it-while-routerprovider-is-rendered-only-once-in-app",
+      "featureTitle": "Fix the TanStack Router configuration in `frontend/src/App.tsx` so the app renders routes instead of a blank screen. Specifically: do not render a `RouterProvider` inside the `createRootRoute` component (it references `router` before initialization and also nests a second RouterProvider). The root route component must render the routed content (e.g., via the router's Outlet pattern) and keep global wrappers like `ThemeProvider` and `Toaster` around it, while `RouterProvider` is rendered only once (in `App`).",
+      "files": [
+        "frontend/src/App.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-17"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-an-application-level-user-friendly-error-fallback-for-unexpected-client-runtime-failures-during-app-initialization-render-so-users-do-not-see-a-blank-screen-the-fallback-must-display-a-simple-english-message-and-a-basic-recovery-action-e-g-reload-page-and-it-must-not-leak-sensitive-details",
+      "featureTitle": "Add an application-level user-friendly error fallback for unexpected client runtime failures during app initialization/render (so users do not see a blank screen). The fallback must display a simple English message and a basic recovery action (e.g., reload page), and it must not leak sensitive details.",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/components/layouts/AdminDashboardLayout.tsx",
-        "frontend/src/components/layouts/UserDashboardLayout.tsx",
-        "frontend/src/components/nav/PublicHeader.tsx",
-        "frontend/src/components/screens/AccessDeniedScreen.tsx",
-        "frontend/src/hooks/useSession.ts",
-        "frontend/src/routes/routeGuards.tsx"
+        "frontend/src/components/AppErrorBoundary.tsx",
+        "frontend/src/components/screens/AppErrorFallback.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -23,314 +39,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-authentication-and-role-based-access-control-users-can-only-access-their-own-data-admins-can-access-global-controls-include-a-secure-initial-admin-account-with-email-admin-vcoin-com-and-password-srkkhan786-and-require-the-admin-to-change-the-password-after-first-successful-login",
-      "featureTitle": "Implement authentication and role-based access control: users can only access their own data; admins can access global controls. Include a secure initial admin account with email \"admin@vcoin.com\" and password \"Srkkhan786@\", and require the admin to change the password after first successful login.",
-      "files": [
-        "frontend/src/components/nav/AdminSidebar.tsx",
-        "frontend/src/components/nav/UserSidebar.tsx",
-        "frontend/src/pages/admin/AdminSettings.tsx",
-        "frontend/src/pages/auth/Login.tsx",
-        "frontend/src/routes/routeGuards.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-secure-registration-and-anti-duplicate-registration-controls-without-email-otp-verification-enforce-unique-email-case-insensitive-and-add-an-additional-anti-duplicate-mechanism-using-a-stored-client-fingerprint-browser-generated-stable-id-plus-backend-side-rate-limits-per-fingerprint-and-per-ip-equivalent-signal-available-from-the-platform-if-any-provide-clear-english-error-messages-when-blocked",
-      "featureTitle": "Implement secure registration and anti-duplicate registration controls without email/OTP verification: enforce unique email (case-insensitive) and add an additional anti-duplicate mechanism using a stored client fingerprint (browser-generated stable ID) plus backend-side rate limits per fingerprint and per IP-equivalent signal available from the platform (if any). Provide clear English error messages when blocked.",
-      "files": [
-        "frontend/src/pages/auth/Register.tsx",
-        "frontend/src/utils/fingerprint.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-a-professional-consistent-ui-ux-for-the-public-site-user-panel-and-admin-panel-with-a-single-coherent-visual-theme-colors-typography-spacing-components-include-a-collapsible-one-click-open-close-sidebar-for-both-user-and-admin-dashboards",
-      "featureTitle": "Create a professional, consistent UI/UX for the public site, user panel, and admin panel with a single coherent visual theme (colors, typography, spacing, components). Include a collapsible one-click open/close sidebar for both user and admin dashboards.",
-      "files": [
-        "frontend/src/components/layouts/AdminDashboardLayout.tsx",
-        "frontend/src/components/layouts/UserDashboardLayout.tsx",
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-presale-stages-and-purchase-calculations-informational-off-chain-stage-1-0-05-80m-stage-2-0-08-70m-stage-3-0-12-50m-the-buy-vcoin-page-must-calculate-required-usdt-amount-from-selected-vcn-quantity-and-current-stage-price-show-remaining-stage-supply-based-on-approved-sales-and-prevent-buys-beyond-remaining-supply",
-      "featureTitle": "Implement presale stages and purchase calculations (informational/off-chain): Stage 1 ($0.05, 80M), Stage 2 ($0.08, 70M), Stage 3 ($0.12, 50M). The Buy VCoin page must calculate required USDT amount from selected VCN quantity and current stage price; show remaining stage supply based on approved sales; and prevent buys beyond remaining supply.",
-      "files": [
-        "frontend/src/pages/user/BuyVCoin.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-an-admin-controlled-usdt-wallet-address-setting-the-buy-vcoin-page-must-always-display-the-latest-wallet-address-from-backend-configuration-and-reflect-changes-immediately-after-refresh-no-hardcoded-address",
-      "featureTitle": "Add an admin-controlled USDT wallet address setting. The Buy VCoin page must always display the latest wallet address from backend configuration, and reflect changes immediately after refresh (no hardcoded address).",
-      "files": [
-        "frontend/src/pages/admin/AdminSettings.tsx",
-        "frontend/src/pages/user/BuyVCoin.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-the-manual-deposit-submission-flow-user-submits-1-transaction-hash-and-2-payment-screenshot-upload-tied-to-a-buy-intent-quantity-price-usdt-amount-stage-store-deposit-as-pending-until-admin-verification-provide-user-deposit-history-with-statuses-pending-approved-rejected-and-admin-reason-for-rejection",
-      "featureTitle": "Implement the manual deposit submission flow: user submits (1) transaction hash and (2) payment screenshot upload, tied to a buy intent (quantity, price, USDT amount, stage). Store deposit as Pending until admin verification. Provide user Deposit History with statuses: Pending/Approved/Rejected and admin reason for rejection.",
-      "files": [
-        "frontend/src/pages/admin/DepositsQueue.tsx",
-        "frontend/src/pages/user/DepositHistory.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-on-admin-approval-of-a-deposit-credit-tokens-to-the-user-and-compute-referral-rewards-maintain-user-balances-as-locked-until-the-configured-launch-date-year-2027-display-user-token-balance-locked-unlocked-and-a-simple-vesting-progress-page-that-shows-monthly-unlock-schedule-starting-post-launch-calculation-only",
-      "featureTitle": "On admin approval of a deposit, credit tokens to the user and compute referral rewards. Maintain user balances as Locked until the configured launch date/year (2027). Display user Token Balance (Locked/Unlocked) and a simple Vesting Progress page that shows monthly unlock schedule starting post-launch (calculation-only).",
-      "files": [
-        "frontend/src/pages/admin/AdminSettings.tsx",
-        "frontend/src/pages/user/TokenBalance.tsx",
-        "frontend/src/pages/user/VestingProgress.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-referral-system-with-auto-referral-code-generation-per-user-and-multi-level-reward-calculations-up-to-5-levels-apply-direct-referral-bonus-10-extra-vcn-to-the-buyer-if-referred-and-mlm-rewards-to-uplines-l1-10-l2-5-l3-1-l4-0-5-l5-0-5-rewards-must-be-credited-as-locked-tokens-and-shown-in-referral-earnings",
-      "featureTitle": "Implement referral system with auto referral code generation per user and multi-level reward calculations up to 5 levels. Apply: direct referral bonus 10% extra VCN to the buyer (if referred), and MLM rewards to uplines: L1 10%, L2 5%, L3 1%, L4 0.5%, L5 0.5%. Rewards must be credited as Locked tokens and shown in Referral Earnings.",
-      "files": [
-        "frontend/src/pages/auth/Register.tsx",
-        "frontend/src/pages/user/ReferralEarnings.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-9"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-a-referral-network-tree-view-in-the-user-dashboard-showing-downline-structure-up-to-at-least-5-levels-paginated-or-expandable-for-performance",
-      "featureTitle": "Create a Referral Network Tree view in the user dashboard showing downline structure up to at least 5 levels (paginated or expandable for performance).",
-      "files": [
-        "frontend/src/pages/user/ReferralNetworkTree.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-10"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-admin-dashboard-metrics-and-controls-show-total-registered-users-total-tokens-sold-approved-total-usdt-collected-approved-current-stage-and-count-of-pending-verifications-provide-admin-tools-to-switch-stage-update-price-manual-token-credit-debit-per-user-manage-override-referral-reward-entries-for-a-user-and-create-announcement-popups-shown-to-users",
-      "featureTitle": "Admin dashboard metrics and controls: show total registered users, total tokens sold (approved), total USDT collected (approved), current stage, and count of pending verifications. Provide admin tools to: switch stage, update price, manual token credit/debit per user, manage/override referral reward entries for a user, and create announcement popups shown to users.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/admin/AdminHome.tsx",
-        "frontend/src/pages/admin/Announcements.tsx",
-        "frontend/src/pages/admin/UsersManagement.tsx",
-        "frontend/src/pages/user/UserHome.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-11"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-public-informational-pages-with-readable-english-content-based-on-the-provided-document-whitepaper-style-overview-vision-mission-tokenomics-presale-stages-lock-vesting-security-legal-risk-smart-contract-architecture-descriptive-only-no-actual-blockchain-code-and-roadmap-2025-2030",
-      "featureTitle": "Add public informational pages with readable English content based on the provided document: Whitepaper-style overview (Vision/Mission, Tokenomics, Presale Stages, Lock/Vesting, Security, Legal/Risk), Smart Contract Architecture (descriptive only, no actual blockchain code), and Roadmap (2025–2030).",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/nav/PublicHeader.tsx",
-        "frontend/src/pages/public/Roadmap.tsx",
-        "frontend/src/pages/public/SmartContractArchitecture.tsx",
-        "frontend/src/pages/public/Whitepaper.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-12"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-file-upload-handling-for-payment-screenshots-accept-common-image-formats-validate-file-size-store-the-image-as-a-stable-asset-reference-retrievable-by-admins-for-review-and-show-a-thumbnail-preview-in-both-user-history-and-admin-review-screens",
-      "featureTitle": "Implement file upload handling for payment screenshots: accept common image formats, validate file size, store the image as a stable asset reference retrievable by admins for review, and show a thumbnail/preview in both user history and admin review screens.",
-      "files": [
-        "frontend/src/pages/admin/DepositsQueue.tsx",
-        "frontend/src/pages/user/DepositHistory.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-13"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-provide-clear-english-status-and-error-messaging-across-the-app-registration-blocks-deposit-status-locked-tokens-vesting-availability-admin-actions",
-      "featureTitle": "Provide clear English status and error messaging across the app (registration blocks, deposit status, locked tokens, vesting availability, admin actions).",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/auth/Register.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-15"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-generated-static-brand-assets-and-use-them-in-the-ui-vcoin-logo-favicon-and-a-subtle-dashboard-public-hero-background-illustration-store-these-in-frontend-public-assets-generated-and-reference-them-directly-from-the-frontend",
-      "featureTitle": "Add generated static brand assets and use them in the UI: VCoin logo, favicon, and a subtle dashboard/public hero background illustration. Store these in frontend/public/assets/generated and reference them directly from the frontend.",
-      "files": [
-        "frontend/index.html",
-        "frontend/src/components/layouts/AdminDashboardLayout.tsx",
-        "frontend/src/components/layouts/UserDashboardLayout.tsx",
-        "frontend/src/components/nav/PublicHeader.tsx",
-        "frontend/src/pages/auth/Login.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-16"
+        "REQ-18"
       ],
       "confidence": "high"
     }

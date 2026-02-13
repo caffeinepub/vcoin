@@ -1,5 +1,5 @@
 {
-  "frontend/src/App.tsx": "Main application component with TanStack Router setup, defining all public, auth, user dashboard, and admin dashboard routes with proper layout nesting and theme provider.",
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup using Outlet pattern in root route, defining all public, auth, user dashboard, and admin dashboard routes with proper layout nesting, theme provider, and error boundary wrapper.",
   "frontend/src/hooks/useSession.ts": "Session management hook that combines Internet Identity authentication state with user profile and role queries to provide unified session context across the app.",
   "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend data fetching operations including user profiles, presale stage, wallet address, deposit intents, and submissions.",
   "frontend/src/routes/routeGuards.tsx": "Route guard components (UserGuard and AdminGuard) that enforce authentication and role-based access control with loading states and redirects.",
@@ -32,5 +32,7 @@
   "frontend/src/pages/admin/Announcements.tsx": "Admin announcements management page for creating and managing user-facing announcements (placeholder for CRUD operations).",
   "frontend/src/utils/fingerprint.ts": "Browser fingerprint generation utility that creates and persists a stable device identifier in localStorage for anti-duplicate registration checks.",
   "frontend/src/index.css": "Global styles with VCoin-branded OKLCH color system featuring gold primary color on dark background theme for consistent visual identity.",
-  "frontend/index.html": "HTML entry point with VCoin favicon, proper meta tags, and title."
+  "frontend/index.html": "HTML entry point with VCoin favicon, proper meta tags, and title.",
+  "frontend/src/components/AppErrorBoundary.tsx": "React error boundary component that catches unexpected client runtime errors during app initialization/render and displays a user-friendly fallback UI instead of a blank screen.",
+  "frontend/src/components/screens/AppErrorFallback.tsx": "Minimal error fallback screen component displaying a generic error message with a reload button for recovery when unexpected runtime errors occur."
 }

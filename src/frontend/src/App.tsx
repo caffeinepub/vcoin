@@ -1,6 +1,7 @@
-import { RouterProvider, createRouter, createRoute, createRootRoute } from '@tanstack/react-router';
+import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
+import AppErrorBoundary from './components/AppErrorBoundary';
 import PublicLayout from './components/layouts/PublicLayout';
 import UserDashboardLayout from './components/layouts/UserDashboardLayout';
 import AdminDashboardLayout from './components/layouts/AdminDashboardLayout';
@@ -28,7 +29,7 @@ const rootRoute = createRootRoute({
   component: () => (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <div className="min-h-screen bg-background">
-        <RouterProvider router={router} />
+        <Outlet />
         <Toaster />
       </div>
     </ThemeProvider>
@@ -204,5 +205,9 @@ declare module '@tanstack/react-router' {
 }
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AppErrorBoundary>
+      <RouterProvider router={router} />
+    </AppErrorBoundary>
+  );
 }

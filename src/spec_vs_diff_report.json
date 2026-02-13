@@ -1,183 +1,50 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T22:48:05.117Z",
-  "summary": "Diff adds initial app scaffolding: routing for public/auth/user/admin sections, dashboard layouts with collapsible sidebars, theme styling, basic admin pages (mostly placeholders), and a Motoko backend actor with some access-control mixins plus user profile and deposit intent/submission storage (as Text). Many presale-specific business rules and admin controls requested in the BuildRequest are not evidenced in the provided diff summary.",
+  "generatedAt": "2026-02-13T22:52:55.709Z",
+  "summary": "REQ-17 is largely addressed by moving routed rendering into the root route via <Outlet /> and removing any RouterProvider usage from the root route component. REQ-18’s fallback UI and boundary components were added, but the diff summary does not conclusively show the error boundary being mounted at the application root (wrapping the router render) due to App.tsx truncation.",
   "missing_requirements": [
     {
-      "id": "REQ-2",
-      "requirement": "Initial secure admin account with email \"admin@vcoin.com\" and password \"Srkkhan786@\", and enforce first-login password change via an Admin Settings screen before accessing other admin pages.",
-      "reason": "Frontend Admin Settings is explicitly a placeholder and shows no password change UI; backend snippet shows only a constant admin email and a UserProfile.passwordChangeRequired flag but no evidence of password auth or enforced password-change gating.",
+      "id": "REQ-17",
+      "requirement": "Render RouterProvider only once in App (and not nested) to avoid blank screen/runtime errors.",
+      "reason": "The shown portion of frontend/src/App.tsx fixes the root route to render <Outlet />, but the file is truncated before the actual App component render where RouterProvider placement/count would be verified. The diff summary does not show the final JSX to confirm RouterProvider is rendered exactly once.",
       "evidence": [
-        "frontend/src/pages/admin/AdminSettings.tsx",
-        "backend/main.mo",
-        "frontend/src/App.tsx"
+        "frontend/src/App.tsx (truncated)"
       ]
     },
     {
-      "id": "REQ-3",
-      "requirement": "Registration must enforce unique email (case-insensitive) plus anti-duplicate mechanism using stored client fingerprint and backend-side rate limits, with clear English error messages.",
-      "reason": "No evidence in the diff summary of registration logic enforcing unique email, fingerprint-based rate limiting, or UI error messaging for these blocks. Backend snippet stores fingerprint in UserProfile but does not show uniqueness checks or rate limit state/logic.",
+      "id": "REQ-18",
+      "requirement": "Add an application-level user-friendly error fallback during app initialization/render so users do not see a blank screen.",
+      "reason": "An AppErrorBoundary and fallback screen were added, but the diff summary does not show that AppErrorBoundary is actually used to wrap the app’s initialization/render tree (e.g., wrapping RouterProvider in App). App.tsx is truncated before the render/return where this would be confirmed.",
       "evidence": [
-        "backend/main.mo",
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "requirement": "Presale stages (Stage 1/2/3 with specified price/supply), buy calculations (USDT = VCN × price), remaining supply based on approved sales, and blocking buys beyond remaining supply; admin can set stage/override price.",
-      "reason": "Admin UI hardcodes stage info and explicitly does not calculate tokens sold/USDT/pending; Admin Settings says presale configuration is \"coming soon\". No evidence of backend stage config or buy validation logic.",
-      "evidence": [
-        "frontend/src/pages/admin/AdminHome.tsx",
-        "frontend/src/pages/admin/AdminSettings.tsx",
-        "frontend/src/hooks/useQueries.ts"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "requirement": "Admin-controlled USDT wallet address setting stored in backend; Buy page displays latest backend value.",
-      "reason": "Admin Settings wallet management is marked \"coming soon\" and there is no evidence of UI to update address or backend persistence for it in the shown snippet.",
-      "evidence": [
-        "frontend/src/pages/admin/AdminSettings.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "requirement": "Manual deposit submission flow must include tx hash + payment screenshot upload tied to buy intent; statuses Pending/Approved/Rejected; admin can approve/reject with reason; rejected reason visible to user; approved deposits immutable.",
-      "reason": "Backend shown stores deposit intents/submissions as plain Text; no evidence of screenshot upload handling, status fields, admin approve/reject endpoints, or rejection reason persistence/display.",
-      "evidence": [
-        "backend/main.mo",
-        "frontend/src/hooks/useQueries.ts"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "requirement": "On deposit approval, credit tokens to user, compute referral rewards, maintain Locked until launch (2027), show Token Balance (Locked/Unlocked) and Vesting Progress with monthly unlock schedule; admin can configure launch timestamp/year and vesting parameters.",
-      "reason": "Admin Settings vesting configuration is \"coming soon\"; no evidence of token balance storage/crediting or vesting schedule computation in backend snippet. UI pages are routed but their implementation is not evidenced in the provided diff summary.",
-      "evidence": [
-        "frontend/src/pages/admin/AdminSettings.tsx",
-        "frontend/src/App.tsx",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "requirement": "Referral system: unique referral code per user, referral link, immutable referredBy on registration, multi-level rewards up to 5 levels with specified percentages, credited as Locked and visible in Referral Earnings with per-event breakdown.",
-      "reason": "Backend UserProfile contains referralCode/referredBy fields, but no evidence of code generation, immutable linkage enforcement, MLM reward computation/crediting on approval, or referral earnings records/endpoints.",
-      "evidence": [
-        "backend/main.mo",
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "requirement": "Referral Network Tree view showing downline up to level 5 with pagination/expansion for performance.",
-      "reason": "Route exists, but no evidence of the tree UI implementation or backend query support in the provided diff summary.",
-      "evidence": [
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "requirement": "Admin dashboard metrics (total users/tokens sold/USDT/current stage/pending verifications) computed from backend and controls to switch stage/update price, manual credit/debit with audit note, manage/override referral entries, and create announcement popups shown to users.",
-      "reason": "AdminHome uses placeholders (zeros) for key metrics and hardcoded stage info; Admin Settings and Announcements are placeholders; no evidence of required admin tools or announcement popups shown to users.",
-      "evidence": [
-        "frontend/src/pages/admin/AdminHome.tsx",
-        "frontend/src/pages/admin/AdminSettings.tsx",
-        "frontend/src/pages/admin/Announcements.tsx"
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "requirement": "File upload handling for payment screenshots: validate formats/size, store stable asset reference retrievable by admins, show thumbnail/preview in user history and admin review.",
-      "reason": "Although backend includes blob-storage mixins, no evidence is shown of upload endpoints, validation, or UI preview/thumbnail usage for deposits.",
-      "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "requirement": "Audit trail for sensitive admin actions with who/what/when/before-after values; admin UI to view audit logs with filters.",
-      "reason": "No evidence in backend snippet of audit record types/storage or any frontend admin audit log screen/routes.",
-      "evidence": [
-        "backend/main.mo",
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "id": "REQ-16",
-      "requirement": "Generated static brand assets (logo, favicon, hero background) must exist under frontend/public/assets/generated and be used in UI.",
-      "reason": "UI references the logo path, but the diff summary does not show any added image files under frontend/public/assets/generated (they may be in omitted files, but it is not evidenced here).",
-      "evidence": [
-        "frontend/src/components/nav/PublicHeader.tsx",
-        "frontend/src/components/nav/UserSidebar.tsx",
-        "frontend/src/components/nav/AdminSidebar.tsx"
+        "frontend/src/components/AppErrorBoundary.tsx",
+        "frontend/src/components/screens/AppErrorFallback.tsx",
+        "frontend/src/App.tsx (truncated)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Promotional footer link to caffeine.ai with UTM tracking parameters.",
-      "reason": "Not requested in the BuildRequest; introduces external branding/tracking link.",
+      "description": "Error boundary logs caught errors and errorInfo to the browser console via console.error.",
+      "reason": "REQ-18 requests a user-friendly fallback that does not leak sensitive details; it does not request console logging. This is additional behavior beyond the request (though common/benign).",
       "evidence": [
-        "frontend/src/components/nav/PublicFooter.tsx"
+        "frontend/src/components/AppErrorBoundary.tsx"
       ]
     },
     {
-      "description": "Secret URL parameter \"caffeineAdminToken\" used to initialize access control from the frontend.",
-      "reason": "BuildRequest does not specify a secret URL token mechanism for admin bootstrap; this is an additional control surface not described in requirements.",
+      "description": "Fallback UI includes a Lucide alert icon (AlertCircle) and additional styled layout elements.",
+      "reason": "REQ-18 only specifies a simple English message and a recovery action; the icon/styling is extra UI behavior not explicitly requested.",
       "evidence": [
-        "frontend/src/hooks/useActor.ts"
+        "frontend/src/components/screens/AppErrorFallback.tsx"
       ]
     }
   ],
-  "confidence": 0.62,
+  "confidence": 0.64,
   "changed_files": [
-    "all_files_summary.json",
-    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.css",
-    "frontend/index.html",
     "frontend/src/App.tsx",
-    "frontend/src/components/layouts/AdminDashboardLayout.tsx",
-    "frontend/src/components/layouts/PublicLayout.tsx",
-    "frontend/src/components/layouts/UserDashboardLayout.tsx",
-    "frontend/src/components/nav/AdminSidebar.tsx",
-    "frontend/src/components/nav/DashboardHeader.tsx",
-    "frontend/src/components/nav/PublicFooter.tsx",
-    "frontend/src/components/nav/PublicHeader.tsx",
-    "frontend/src/components/nav/UserSidebar.tsx",
-    "frontend/src/components/screens/AccessDeniedScreen.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/hooks/useSession.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/admin/AdminHome.tsx",
-    "frontend/src/pages/admin/AdminSettings.tsx",
-    "frontend/src/pages/admin/Announcements.tsx",
-    "frontend/src/pages/admin/DepositsQueue.tsx",
-    "frontend/src/pages/admin/UsersManagement.tsx",
-    "frontend/src/pages/auth/Login.tsx",
-    "frontend/src/pages/auth/Register.tsx",
-    "frontend/src/pages/public/Home.tsx",
-    "frontend/src/pages/public/Roadmap.tsx",
-    "frontend/src/pages/public/SmartContractArchitecture.tsx",
-    "frontend/src/pages/public/Whitepaper.tsx",
-    "frontend/src/pages/user/BuyVCoin.tsx",
-    "frontend/src/pages/user/DepositHistory.tsx",
-    "frontend/src/pages/user/ReferralEarnings.tsx",
-    "frontend/src/pages/user/ReferralNetworkTree.tsx",
-    "frontend/src/pages/user/TokenBalance.tsx",
-    "frontend/src/pages/user/UserHome.tsx",
-    "frontend/src/pages/user/VestingProgress.tsx",
-    "frontend/src/routes/routeGuards.tsx",
-    "frontend/src/utils/fingerprint.ts",
-    "frontend/src/utils/urlParams.ts",
-    "frontend/tailwind.config.js",
+    "frontend/src/components/AppErrorBoundary.tsx",
+    "frontend/src/components/screens/AppErrorFallback.tsx",
     "project_state.json"
   ]
 }
