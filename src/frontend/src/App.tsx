@@ -23,6 +23,7 @@ import DepositsQueue from './pages/admin/DepositsQueue';
 import UsersManagement from './pages/admin/UsersManagement';
 import AdminSettings from './pages/admin/AdminSettings';
 import Announcements from './pages/admin/Announcements';
+import NotFound from './pages/NotFound';
 import { UserGuard, AdminGuard } from './routes/routeGuards';
 
 const rootRoute = createRootRoute({
@@ -34,6 +35,7 @@ const rootRoute = createRootRoute({
       </div>
     </ThemeProvider>
   ),
+  notFoundComponent: NotFound,
 });
 
 // Public routes
@@ -196,7 +198,12 @@ const routeTree = rootRoute.addChildren([
   ]),
 ]);
 
-const router = createRouter({ routeTree });
+// Create router with base path support for production builds
+const router = createRouter({
+  routeTree,
+  basepath: import.meta.env.BASE_URL || '/',
+  defaultPreload: 'intent',
+});
 
 declare module '@tanstack/react-router' {
   interface Register {

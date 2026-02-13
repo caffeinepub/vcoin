@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@tanstack/react-router';
 import { Shield, TrendingUp, Users, Lock } from 'lucide-react';
+import { assetUrl } from '../../utils/assetUrl';
 
 export default function Home() {
   return (
@@ -10,7 +11,7 @@ export default function Home() {
       <section
         className="relative py-20 md:py-32 overflow-hidden"
         style={{
-          backgroundImage: 'url(/assets/generated/vcoin-hero-bg.dim_1920x1080.png)',
+          backgroundImage: `url(${assetUrl('assets/generated/vcoin-hero-bg.dim_1920x1080.png')})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -19,7 +20,7 @@ export default function Home() {
         <div className="container relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <img
-              src="/assets/generated/vcoin-logo.dim_512x512.png"
+              src={assetUrl('assets/generated/vcoin-logo.dim_512x512.png')}
               alt="VCoin"
               className="h-24 w-24 mx-auto mb-8"
             />

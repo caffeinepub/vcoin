@@ -1,47 +1,93 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix TanStack Router root route rendering and add safe app-level error fallback",
+  "title": "Fix mobile blank/black preview by hardening base-path routing, asset URLs, and surfacing initialization errors",
   "requirements": [
     {
-      "id": "REQ-17",
-      "summary": "Correct TanStack Router root route so routed content renders (no nested RouterProvider; use Outlet under global wrappers) and RouterProvider is rendered only once in App.",
+      "id": "REQ-19",
+      "summary": "Fix mobile deployed preview blank/black screen so public Home renders at `/` and public routes don’t hang; ensure initial render failures show visible error UI.",
       "acceptanceCriteria": [
-        "Opening the deployed site renders the public home page content instead of a blank screen.",
-        "The browser console does not show a runtime error related to accessing `router` before initialization or having nested `RouterProvider` components.",
-        "Navigation between public routes (e.g., `/`, `/whitepaper`, `/roadmap`) works and updates the rendered page content."
+        "Opening the deployed preview URL on a mobile browser renders the Public Header and Home hero section (logo, headline, buttons) instead of a blank/black screen.",
+        "No infinite loading state occurs on the public routes (`/`, `/whitepaper`, `/smart-contract`, `/roadmap`).",
+        "Any runtime error during initial render results in a visible error UI (not a blank screen)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Fix the root route component to render routed content via TanStack Router's Outlet pattern (and keep global wrappers like ThemeProvider and Toaster around it), and remove the nested RouterProvider usage from inside createRootRoute. Ensure RouterProvider is only rendered once at the App component level."
+          "description": "Remove hardcoded absolute root paths that break when hosted under a non-root base path (e.g., make the module script and favicon references base-path-safe) so JS/CSS load correctly in deployed previews."
+        },
+        {
+          "path": "frontend/src/utils/assetUrl.ts",
+          "operation": "create",
+          "description": "Add a small utility to build base-path-safe static asset URLs (prefix with the build-time base URL) to prevent missing images from contributing to a blank/black first paint on mobile."
+        },
+        {
+          "path": "frontend/src/pages/public/Home.tsx",
+          "operation": "modify",
+          "description": "Update hero background/logo references to use the base-path-safe asset URL helper instead of absolute-root URLs, ensuring the Home hero renders in deployed previews hosted under subpaths."
+        },
+        {
+          "path": "frontend/src/components/nav/PublicHeader.tsx",
+          "operation": "modify",
+          "description": "Update any logo/image/static asset references to use the base-path-safe asset URL helper so the Public Header renders reliably in deployed previews hosted under subpaths."
+        },
+        {
+          "path": "frontend/src/components/AppErrorBoundary.tsx",
+          "operation": "modify",
+          "description": "Enhance the error boundary to display a clear, user-facing fallback for any render-time exceptions (keep English text; avoid leaking stack traces) and ensure the fallback is always visible on mobile."
         }
       ]
     },
     {
-      "id": "REQ-18",
-      "summary": "Add an application-level, user-friendly client error fallback to avoid blank screen on unexpected runtime failures during initial render.",
+      "id": "REQ-20",
+      "summary": "Harden TanStack Router initialization for deployed base paths, direct-refresh navigation, and add a user-friendly Not Found route.",
       "acceptanceCriteria": [
-        "If a runtime error is thrown during initial render, the UI shows an English error fallback screen instead of rendering nothing.",
-        "The fallback screen provides a visible action to recover (at minimum, a “Reload” button that refreshes the page).",
-        "In normal operation (no error), the fallback does not appear and the app behaves as before."
+        "Navigating directly to `/`, `/login`, `/register`, `/user`, and `/admin` works via browser refresh in the deployed preview (no blank screen).",
+        "If a user navigates to an unknown route, a Not Found screen is rendered with clear English text and a link back to Home.",
+        "Router initialization does not throw (and does not depend on undeclared globals) in production builds."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/screens/AppErrorFallback.tsx",
+          "path": "frontend/src/pages/NotFound.tsx",
           "operation": "create",
-          "description": "Create a minimal, user-friendly fallback screen component that shows a generic English error message (no sensitive details) and a visible recovery action (Reload button that refreshes the page)."
-        },
-        {
-          "path": "frontend/src/components/AppErrorBoundary.tsx",
-          "operation": "create",
-          "description": "Create a React error boundary component that catches unexpected client runtime errors during app initialization/render and renders AppErrorFallback instead of a blank screen."
+          "description": "Create a simple Not Found screen with clear English text and a link back to Home."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wrap the single RouterProvider render in App with the new AppErrorBoundary so unexpected render-time errors display the fallback UI while normal operation remains unchanged."
+          "description": "Update TanStack Router setup to be base-path-aware in production builds and add a catch-all Not Found route wired into the route tree; also move router creation into a safe initialization path so failures show a visible error UI instead of causing a blank screen."
+        }
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "summary": "Surface app-level initialization/auth failures with visible English UI and recovery actions; avoid indefinite protected-route loading states.",
+      "acceptanceCriteria": [
+        "If Internet Identity initialization fails, the user sees a visible error message and a reload button instead of a blank screen.",
+        "If protected routes are loading authentication/actor state, a visible loading UI is shown; it must not get stuck indefinitely without showing either the destination page or an error message.",
+        "All user-facing error text is in English and does not leak stack traces or sensitive details."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/screens/InitErrorScreen.tsx",
+          "operation": "create",
+          "description": "Add a dedicated, user-friendly initialization error screen (English text) with a reload action; do not display stack traces or sensitive details."
+        },
+        {
+          "path": "frontend/src/hooks/useSession.ts",
+          "operation": "modify",
+          "description": "Harden session derived state to account for Internet Identity initialization failures (e.g., treat presence of `loginError` as an error state even if status becomes idle) and to prevent indefinite loading when the user is not authenticated or initialization failed."
+        },
+        {
+          "path": "frontend/src/routes/routeGuards.tsx",
+          "operation": "modify",
+          "description": "Update UserGuard/AdminGuard to (1) show InitErrorScreen when initialization/auth fails, (2) show a clear loading state only while a meaningful auth/actor resolution is in progress, and (3) avoid returning `null` in a way that can appear as a blank screen."
+        },
+        {
+          "path": "frontend/src/components/layouts/PublicLayout.tsx",
+          "operation": "modify",
+          "description": "Add a non-blocking, visible banner/inline notice when Internet Identity initialization fails (with reload action) so public pages remain accessible while still surfacing the failure to users."
         }
       ]
     }

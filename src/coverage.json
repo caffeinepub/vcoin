@@ -1,52 +1,83 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T22:52:55.712Z",
+  "generatedAt": "2026-02-13T23:00:23.375Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-17",
-        "summary": "Fix the TanStack Router configuration in `frontend/src/App.tsx` so the app renders routes instead of a blank screen. Specifically: do not render a `RouterProvider` inside the `createRootRoute` component (it references `router` before initialization and also nests a second RouterProvider). The root route component must render the routed content (e.g., via the router's Outlet pattern) and keep global wrappers like `ThemeProvider` and `Toaster` around it, while `RouterProvider` is rendered only once (in `App`).",
+        "id": "REQ-19",
+        "summary": "Investigate and fix the deployed preview rendering as a blank/black screen (as shown in the uploaded screenshot) so that the public Home page content is visible at `/` on mobile browsers.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/index.html",
+          "frontend/src/utils/assetUrl.ts",
+          "frontend/src/pages/public/Home.tsx",
+          "frontend/src/components/nav/PublicHeader.tsx",
+          "frontend/src/components/AppErrorBoundary.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/index.html",
+          "frontend/src/utils/assetUrl.ts",
+          "frontend/src/pages/public/Home.tsx",
+          "frontend/src/components/nav/PublicHeader.tsx",
+          "frontend/src/components/AppErrorBoundary.tsx"
+        ]
+      },
+      {
+        "id": "REQ-20",
+        "summary": "Harden TanStack Router initialization so route matching works correctly in the deployed environment, including when hosted under a non-root base path, and add a user-friendly Not Found route for unmatched paths.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/NotFound.tsx",
           "frontend/src/App.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/pages/NotFound.tsx",
           "frontend/src/App.tsx"
         ]
       },
       {
-        "id": "REQ-18",
-        "summary": "Add an application-level user-friendly error fallback for unexpected client runtime failures during app initialization/render (so users do not see a blank screen). The fallback must display a simple English message and a basic recovery action (e.g., reload page), and it must not leak sensitive details.",
+        "id": "REQ-21",
+        "summary": "Ensure app-level failures are always surfaced to users: if Internet Identity initialization fails or an unexpected error occurs before protected routes can resolve, display a visible English error state with a recovery action (e.g., reload).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/screens/AppErrorFallback.tsx",
-          "frontend/src/components/AppErrorBoundary.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/components/screens/InitErrorScreen.tsx",
+          "frontend/src/hooks/useSession.ts",
+          "frontend/src/routes/routeGuards.tsx",
+          "frontend/src/components/layouts/PublicLayout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/screens/AppErrorFallback.tsx",
-          "frontend/src/components/AppErrorBoundary.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/components/screens/InitErrorScreen.tsx",
+          "frontend/src/hooks/useSession.ts",
+          "frontend/src/routes/routeGuards.tsx",
+          "frontend/src/components/layouts/PublicLayout.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
-    "build-template/README.md",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/index.html",
     "frontend/src/App.tsx",
     "frontend/src/components/AppErrorBoundary.tsx",
+    "frontend/src/components/layouts/PublicLayout.tsx",
+    "frontend/src/components/nav/PublicHeader.tsx",
     "frontend/src/components/screens/AppErrorFallback.tsx",
+    "frontend/src/components/screens/InitErrorScreen.tsx",
+    "frontend/src/hooks/useSession.ts",
+    "frontend/src/pages/NotFound.tsx",
+    "frontend/src/pages/public/Home.tsx",
+    "frontend/src/routes/routeGuards.tsx",
+    "frontend/src/utils/assetUrl.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

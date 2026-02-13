@@ -7,6 +7,7 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  error?: Error;
 }
 
 export default class AppErrorBoundary extends Component<Props, State> {
@@ -15,8 +16,8 @@ export default class AppErrorBoundary extends Component<Props, State> {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(_: Error): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {

@@ -2,10 +2,14 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-fix-the-tanstack-router-configuration-in-frontend-src-app-tsx-so-the-app-renders-routes-instead-of-a-blank-screen-specifically-do-not-render-a-routerprovider-inside-the-createrootroute-component-it-references-router-before-initialization-and-also-nests-a-second-routerprovider-the-root-route-component-must-render-the-routed-content-e-g-via-the-router-s-outlet-pattern-and-keep-global-wrappers-like-themeprovider-and-toaster-around-it-while-routerprovider-is-rendered-only-once-in-app",
-      "featureTitle": "Fix the TanStack Router configuration in `frontend/src/App.tsx` so the app renders routes instead of a blank screen. Specifically: do not render a `RouterProvider` inside the `createRootRoute` component (it references `router` before initialization and also nests a second RouterProvider). The root route component must render the routed content (e.g., via the router's Outlet pattern) and keep global wrappers like `ThemeProvider` and `Toaster` around it, while `RouterProvider` is rendered only once (in `App`).",
+      "featureId": "feature-investigate-and-fix-the-deployed-preview-rendering-as-a-blank-black-screen-as-shown-in-the-uploaded-screenshot-so-that-the-public-home-page-content-is-visible-at-on-mobile-browsers",
+      "featureTitle": "Investigate and fix the deployed preview rendering as a blank/black screen (as shown in the uploaded screenshot) so that the public Home page content is visible at `/` on mobile browsers.",
       "files": [
-        "frontend/src/App.tsx"
+        "frontend/index.html",
+        "frontend/src/components/AppErrorBoundary.tsx",
+        "frontend/src/components/nav/PublicHeader.tsx",
+        "frontend/src/pages/public/Home.tsx",
+        "frontend/src/utils/assetUrl.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,17 +21,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-17"
+        "REQ-19"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-an-application-level-user-friendly-error-fallback-for-unexpected-client-runtime-failures-during-app-initialization-render-so-users-do-not-see-a-blank-screen-the-fallback-must-display-a-simple-english-message-and-a-basic-recovery-action-e-g-reload-page-and-it-must-not-leak-sensitive-details",
-      "featureTitle": "Add an application-level user-friendly error fallback for unexpected client runtime failures during app initialization/render (so users do not see a blank screen). The fallback must display a simple English message and a basic recovery action (e.g., reload page), and it must not leak sensitive details.",
+      "featureId": "feature-harden-tanstack-router-initialization-so-route-matching-works-correctly-in-the-deployed-environment-including-when-hosted-under-a-non-root-base-path-and-add-a-user-friendly-not-found-route-for-unmatched-paths",
+      "featureTitle": "Harden TanStack Router initialization so route matching works correctly in the deployed environment, including when hosted under a non-root base path, and add a user-friendly Not Found route for unmatched paths.",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/components/AppErrorBoundary.tsx",
-        "frontend/src/components/screens/AppErrorFallback.tsx"
+        "frontend/src/pages/NotFound.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -39,7 +42,30 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-18"
+        "REQ-20"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-app-level-failures-are-always-surfaced-to-users-if-internet-identity-initialization-fails-or-an-unexpected-error-occurs-before-protected-routes-can-resolve-display-a-visible-english-error-state-with-a-recovery-action-e-g-reload",
+      "featureTitle": "Ensure app-level failures are always surfaced to users: if Internet Identity initialization fails or an unexpected error occurs before protected routes can resolve, display a visible English error state with a recovery action (e.g., reload).",
+      "files": [
+        "frontend/src/components/layouts/PublicLayout.tsx",
+        "frontend/src/components/screens/InitErrorScreen.tsx",
+        "frontend/src/hooks/useSession.ts",
+        "frontend/src/routes/routeGuards.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-21"
       ],
       "confidence": "high"
     }

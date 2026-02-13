@@ -1,52 +1,72 @@
 {
   "kind": "build_request",
-  "title": "Fix blank page by correcting TanStack Router root route setup and add safe fallback rendering",
+  "title": "Fix deployed preview showing blank/black screen on mobile",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-17",
-      "text": "Fix the TanStack Router configuration in `frontend/src/App.tsx` so the app renders routes instead of a blank screen. Specifically: do not render a `RouterProvider` inside the `createRootRoute` component (it references `router` before initialization and also nests a second RouterProvider). The root route component must render the routed content (e.g., via the router's Outlet pattern) and keep global wrappers like `ThemeProvider` and `Toaster` around it, while `RouterProvider` is rendered only once (in `App`).",
+      "id": "REQ-19",
+      "text": "Investigate and fix the deployed preview rendering as a blank/black screen (as shown in the uploaded screenshot) so that the public Home page content is visible at `/` on mobile browsers.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-1"
         ],
         "quotes": [
-          "Kuch show ni ho rha h bs blank dikh rhe h"
+          "Preview me bs asa dikh rha h"
         ]
       },
       "acceptanceCriteria": [
-        "Opening the deployed site renders the public home page content instead of a blank screen.",
-        "The browser console does not show a runtime error related to accessing `router` before initialization or having nested `RouterProvider` components.",
-        "Navigation between public routes (e.g., `/`, `/whitepaper`, `/roadmap`) works and updates the rendered page content."
+        "Opening the deployed preview URL on a mobile browser renders the Public Header and Home hero section (logo, headline, buttons) instead of a blank/black screen.",
+        "No infinite loading state occurs on the public routes (`/`, `/whitepaper`, `/smart-contract`, `/roadmap`).",
+        "Any runtime error during initial render results in a visible error UI (not a blank screen)."
       ]
     },
     {
-      "id": "REQ-18",
-      "text": "Add an application-level user-friendly error fallback for unexpected client runtime failures during app initialization/render (so users do not see a blank screen). The fallback must display a simple English message and a basic recovery action (e.g., reload page), and it must not leak sensitive details.",
+      "id": "REQ-20",
+      "text": "Harden TanStack Router initialization so route matching works correctly in the deployed environment, including when hosted under a non-root base path, and add a user-friendly Not Found route for unmatched paths.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-1"
         ],
         "quotes": [
-          "Kuch show ni ho rha h bs blank dikh rhe h"
+          "Preview me bs asa dikh rha h"
         ]
       },
       "acceptanceCriteria": [
-        "If a runtime error is thrown during initial render, the UI shows an English error fallback screen instead of rendering nothing.",
-        "The fallback screen provides a visible action to recover (at minimum, a “Reload” button that refreshes the page).",
-        "In normal operation (no error), the fallback does not appear and the app behaves as before."
+        "Navigating directly to `/`, `/login`, `/register`, `/user`, and `/admin` works via browser refresh in the deployed preview (no blank screen).",
+        "If a user navigates to an unknown route, a Not Found screen is rendered with clear English text and a link back to Home.",
+        "Router initialization does not throw (and does not depend on undeclared globals) in production builds."
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "text": "Ensure app-level failures are always surfaced to users: if Internet Identity initialization fails or an unexpected error occurs before protected routes can resolve, display a visible English error state with a recovery action (e.g., reload).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Preview me bs asa dikh rha h"
+        ]
+      },
+      "acceptanceCriteria": [
+        "If Internet Identity initialization fails, the user sees a visible error message and a reload button instead of a blank screen.",
+        "If protected routes are loading authentication/actor state, a visible loading UI is shown; it must not get stuck indefinitely without showing either the destination page or an error message.",
+        "All user-facing error text is in English and does not leak stack traces or sensitive details."
       ]
     }
   ],
   "constraints": [
-    "Frontend files under `frontend/src/components/ui` and the immutable hook paths listed in SYSTEM_CONTEXT must not be edited.",
-    "Keep backend architecture unchanged (single Motoko actor); this request is strictly about the frontend blank screen rendering issue."
+    "Do not edit files under frontend/src/components/ui (Shadcn components are read-only).",
+    "Do not edit immutable hook paths: frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx.",
+    "Backend must remain single-actor in backend/main.mo; do not introduce additional canisters/services."
   ],
   "nonGoals": [
-    "Implementing new presale/admin/user features beyond fixing the blank render issue.",
-    "Changing authentication behavior or role-based access control logic (unless required to resolve the blank screen symptom)."
+    "Do not add new presale/business features (wallets, new pages, new admin tools) as part of this fix.",
+    "Do not change branding/theme/colors except as needed to resolve visibility/rendering issues.",
+    "Do not introduce third-party auth providers beyond Internet Identity."
   ],
   "imageRequirements": {
     "required": [],

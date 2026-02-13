@@ -1,10 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Fix the frontend blank screen by correcting the TanStack Router root route setup and add a safe, user-friendly error fallback so the app never renders as an empty page on unexpected client errors.
+**Goal:** Fix the deployed mobile preview rendering as a blank/black screen so public pages reliably render and failures show a visible UI instead of a silent blank state.
 
 **Planned changes:**
-- Update `frontend/src/App.tsx` TanStack Router setup so `RouterProvider` is rendered only once (in `App`) and the root route component renders routed content via an Outlet-style pattern while keeping global wrappers (e.g., `ThemeProvider`, `Toaster`) around it.
-- Add an application-level error fallback screen for unexpected runtime failures during initialization/render, showing a simple English message and a “Reload” action without exposing sensitive details.
+- Investigate and resolve the mobile deployed-preview blank/black screen so the Public Header and Home hero content render at `/`.
+- Harden TanStack Router initialization for deployed environments (including non-root base paths), and add a user-friendly Not Found route for unmatched paths.
+- Add app-level error handling so unexpected runtime failures (including Internet Identity initialization issues) render a visible English error UI with a recovery action (e.g., reload) instead of a blank screen.
+- Ensure public routes (`/`, `/whitepaper`, `/smart-contract`, `/roadmap`) and direct navigation/refresh to `/`, `/login`, `/register`, `/user`, `/admin` do not enter an infinite loading/blank state; show loading UI while resolving and surface errors if it fails.
 
-**User-visible outcome:** The deployed site loads the public home page instead of a blank screen, navigation across public routes (e.g., `/`, `/whitepaper`, `/roadmap`) works normally, and if an unexpected client error occurs, users see a friendly fallback with a reload option.
+**User-visible outcome:** Opening the deployed preview on mobile shows the normal Home page (header + hero) and other routes load reliably; unknown paths show a Not Found screen; if initialization fails, users see a clear English error message with a reload option rather than a blank/black screen.

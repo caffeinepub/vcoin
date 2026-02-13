@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
+  "projectStateVersion": 7,
   "summary": "VCoin: a Web2-style presale/admin dashboard site (no on-chain smart contracts) that manually manages presale stages, user deposits (tx hash + screenshot), referral rewards, locked balances/vesting calculations, and an admin-controlled wallet address shown instantly on the buy page. Email/OTP verification not available; prevent duplicate registrations via unique email + device/IP/browser checks.",
   "architectural_notes": [
     "No blockchain integration; system is Web2/manual control only (informational tokenomics/contract docs allowed, not deployable contracts).",
@@ -9,7 +9,8 @@
   ],
   "known_issues": [
     "Build attempt failed previously; user requested a retry.",
-    "Deployed site shows a blank page / nothing renders for the user."
+    "Deployed site shows a blank page / nothing renders for the user.",
+    "User reports the preview still looks the same as before (issue likely unresolved in the deployed preview)."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -146,6 +147,30 @@
       "title": "Add an application-level user-friendly error fallback for unexpected client runtime failures during app initialization/render (so users do not see a blank screen). The fallback must display a simple English message and a basic recovery action (e.g., reload page), and it must not leak sensitive details.",
       "reqIds": [
         "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-deployed-preview-rendering-as-a-blank-black-screen-as-shown-in-the-uploaded-screenshot-so-that-the-public-home-page-content-is-visible-at-on-mobile-browsers",
+      "title": "Investigate and fix the deployed preview rendering as a blank/black screen (as shown in the uploaded screenshot) so that the public Home page content is visible at `/` on mobile browsers.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-harden-tanstack-router-initialization-so-route-matching-works-correctly-in-the-deployed-environment-including-when-hosted-under-a-non-root-base-path-and-add-a-user-friendly-not-found-route-for-unmatched-paths",
+      "title": "Harden TanStack Router initialization so route matching works correctly in the deployed environment, including when hosted under a non-root base path, and add a user-friendly Not Found route for unmatched paths.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-app-level-failures-are-always-surfaced-to-users-if-internet-identity-initialization-fails-or-an-unexpected-error-occurs-before-protected-routes-can-resolve-display-a-visible-english-error-state-with-a-recovery-action-e-g-reload",
+      "title": "Ensure app-level failures are always surfaced to users: if Internet Identity initialization fails or an unexpected error occurs before protected routes can resolve, display a visible English error state with a recovery action (e.g., reload).",
+      "reqIds": [
+        "REQ-21"
       ],
       "version": 1
     }

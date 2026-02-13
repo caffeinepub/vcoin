@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
+import { assetUrl } from '../../utils/assetUrl';
 
 export default function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -10,7 +11,7 @@ export default function PublicHeader() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
-          <img src="/assets/generated/vcoin-logo.dim_512x512.png" alt="VCoin" className="h-10 w-10" />
+          <img src={assetUrl('assets/generated/vcoin-logo.dim_512x512.png')} alt="VCoin" className="h-10 w-10" />
           <span className="text-2xl font-bold">VCoin</span>
         </Link>
 
