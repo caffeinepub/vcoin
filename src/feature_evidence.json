@@ -2,13 +2,35 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-investigate-and-fix-the-deployed-preview-rendering-as-a-blank-black-screen-as-shown-in-the-uploaded-screenshot-so-that-the-public-home-page-content-is-visible-at-on-mobile-browsers",
-      "featureTitle": "Investigate and fix the deployed preview rendering as a blank/black screen (as shown in the uploaded screenshot) so that the public Home page content is visible at `/` on mobile browsers.",
+      "featureId": "feature-investigate-and-fix-the-deployed-preview-rendering-a-completely-blank-page-so-that-the-public-home-page-content-is-visible-at-the-root-path-including-on-mobile-browsers",
+      "featureTitle": "Investigate and fix the deployed preview rendering a completely blank page so that the public Home page content is visible at the root path `/` (including on mobile browsers).",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AppErrorBoundary.tsx",
+        "frontend/src/components/StartupGate.tsx",
+        "frontend/src/components/screens/StartupStatusScreen.tsx",
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-22"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-make-the-app-deployment-base-path-safe-so-route-matching-and-static-assets-load-correctly-when-hosted-under-a-non-root-subpath-e-g-preview-urls-including-fixing-base-url-handling-in-the-html-entry-and-router-initialization-if-needed",
+      "featureTitle": "Make the app deployment/base-path safe so route matching and static assets load correctly when hosted under a non-root subpath (e.g., preview URLs), including fixing base-URL handling in the HTML entry and router initialization if needed.",
       "files": [
         "frontend/index.html",
-        "frontend/src/components/AppErrorBoundary.tsx",
-        "frontend/src/components/nav/PublicHeader.tsx",
-        "frontend/src/pages/public/Home.tsx",
+        "frontend/src/App.tsx",
         "frontend/src/utils/assetUrl.ts"
       ],
       "components": [
@@ -21,38 +43,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-19"
+        "REQ-23"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-harden-tanstack-router-initialization-so-route-matching-works-correctly-in-the-deployed-environment-including-when-hosted-under-a-non-root-base-path-and-add-a-user-friendly-not-found-route-for-unmatched-paths",
-      "featureTitle": "Harden TanStack Router initialization so route matching works correctly in the deployed environment, including when hosted under a non-root base path, and add a user-friendly Not Found route for unmatched paths.",
+      "featureId": "feature-add-a-guaranteed-user-visible-english-startup-status-state-so-the-ui-never-appears-completely-blank-while-the-app-is-initializing-or-if-routing-cannot-render-for-any-reason-without-exposing-sensitive-technical-details",
+      "featureTitle": "Add a guaranteed, user-visible English startup status state so the UI never appears completely blank while the app is initializing or if routing cannot render for any reason (without exposing sensitive technical details).",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/pages/NotFound.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-20"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-app-level-failures-are-always-surfaced-to-users-if-internet-identity-initialization-fails-or-an-unexpected-error-occurs-before-protected-routes-can-resolve-display-a-visible-english-error-state-with-a-recovery-action-e-g-reload",
-      "featureTitle": "Ensure app-level failures are always surfaced to users: if Internet Identity initialization fails or an unexpected error occurs before protected routes can resolve, display a visible English error state with a recovery action (e.g., reload).",
-      "files": [
-        "frontend/src/components/layouts/PublicLayout.tsx",
-        "frontend/src/components/screens/InitErrorScreen.tsx",
-        "frontend/src/hooks/useSession.ts",
+        "frontend/src/components/StartupGate.tsx",
+        "frontend/src/components/screens/StartupStatusScreen.tsx",
         "frontend/src/routes/routeGuards.tsx"
       ],
       "components": [
@@ -65,7 +66,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-21"
+        "REQ-24"
       ],
       "confidence": "high"
     }

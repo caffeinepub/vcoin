@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 9,
   "summary": "VCoin: a Web2-style presale/admin dashboard site (no on-chain smart contracts) that manually manages presale stages, user deposits (tx hash + screenshot), referral rewards, locked balances/vesting calculations, and an admin-controlled wallet address shown instantly on the buy page. Email/OTP verification not available; prevent duplicate registrations via unique email + device/IP/browser checks.",
   "architectural_notes": [
     "No blockchain integration; system is Web2/manual control only (informational tokenomics/contract docs allowed, not deployable contracts).",
@@ -171,6 +171,30 @@
       "title": "Ensure app-level failures are always surfaced to users: if Internet Identity initialization fails or an unexpected error occurs before protected routes can resolve, display a visible English error state with a recovery action (e.g., reload).",
       "reqIds": [
         "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-deployed-preview-rendering-a-completely-blank-page-so-that-the-public-home-page-content-is-visible-at-the-root-path-including-on-mobile-browsers",
+      "title": "Investigate and fix the deployed preview rendering a completely blank page so that the public Home page content is visible at the root path `/` (including on mobile browsers).",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-app-deployment-base-path-safe-so-route-matching-and-static-assets-load-correctly-when-hosted-under-a-non-root-subpath-e-g-preview-urls-including-fixing-base-url-handling-in-the-html-entry-and-router-initialization-if-needed",
+      "title": "Make the app deployment/base-path safe so route matching and static assets load correctly when hosted under a non-root subpath (e.g., preview URLs), including fixing base-URL handling in the HTML entry and router initialization if needed.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-guaranteed-user-visible-english-startup-status-state-so-the-ui-never-appears-completely-blank-while-the-app-is-initializing-or-if-routing-cannot-render-for-any-reason-without-exposing-sensitive-technical-details",
+      "title": "Add a guaranteed, user-visible English startup status state so the UI never appears completely blank while the app is initializing or if routing cannot render for any reason (without exposing sensitive technical details).",
+      "reqIds": [
+        "REQ-24"
       ],
       "version": 1
     }

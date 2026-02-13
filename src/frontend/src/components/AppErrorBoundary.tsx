@@ -21,6 +21,7 @@ export default class AppErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // Log error for debugging but don't expose details to users
     console.error('App error boundary caught an error:', error, errorInfo);
   }
 

@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T23:00:23.375Z",
+  "generatedAt": "2026-02-13T23:07:15.828Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,52 +11,56 @@
     "implemented": 3,
     "items": [
       {
-        "id": "REQ-19",
-        "summary": "Investigate and fix the deployed preview rendering as a blank/black screen (as shown in the uploaded screenshot) so that the public Home page content is visible at `/` on mobile browsers.",
+        "id": "REQ-22",
+        "summary": "Investigate and fix the deployed preview rendering a completely blank page so that the public Home page content is visible at the root path `/` (including on mobile browsers).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/index.html",
-          "frontend/src/utils/assetUrl.ts",
-          "frontend/src/pages/public/Home.tsx",
-          "frontend/src/components/nav/PublicHeader.tsx",
-          "frontend/src/components/AppErrorBoundary.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/components/StartupGate.tsx",
+          "frontend/src/components/screens/StartupStatusScreen.tsx",
+          "frontend/src/components/AppErrorBoundary.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/index.html",
-          "frontend/src/utils/assetUrl.ts",
-          "frontend/src/pages/public/Home.tsx",
-          "frontend/src/components/nav/PublicHeader.tsx",
-          "frontend/src/components/AppErrorBoundary.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/components/StartupGate.tsx",
+          "frontend/src/components/screens/StartupStatusScreen.tsx",
+          "frontend/src/components/AppErrorBoundary.tsx",
+          "frontend/src/index.css"
         ]
       },
       {
-        "id": "REQ-20",
-        "summary": "Harden TanStack Router initialization so route matching works correctly in the deployed environment, including when hosted under a non-root base path, and add a user-friendly Not Found route for unmatched paths.",
+        "id": "REQ-23",
+        "summary": "Make the app deployment/base-path safe so route matching and static assets load correctly when hosted under a non-root subpath (e.g., preview URLs), including fixing base-URL handling in the HTML entry and router initialization if needed.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/NotFound.tsx",
-          "frontend/src/App.tsx"
+          "frontend/index.html",
+          "frontend/src/App.tsx",
+          "frontend/src/utils/assetUrl.ts",
+          "frontend/src/pages/public/Home.tsx",
+          "frontend/src/components/nav/PublicHeader.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/NotFound.tsx",
-          "frontend/src/App.tsx"
+          "frontend/index.html",
+          "frontend/src/App.tsx",
+          "frontend/src/utils/assetUrl.ts"
         ]
       },
       {
-        "id": "REQ-21",
-        "summary": "Ensure app-level failures are always surfaced to users: if Internet Identity initialization fails or an unexpected error occurs before protected routes can resolve, display a visible English error state with a recovery action (e.g., reload).",
+        "id": "REQ-24",
+        "summary": "Add a guaranteed, user-visible English startup status state so the UI never appears completely blank while the app is initializing or if routing cannot render for any reason (without exposing sensitive technical details).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/screens/InitErrorScreen.tsx",
-          "frontend/src/hooks/useSession.ts",
-          "frontend/src/routes/routeGuards.tsx",
-          "frontend/src/components/layouts/PublicLayout.tsx"
+          "frontend/src/components/StartupGate.tsx",
+          "frontend/src/components/screens/StartupStatusScreen.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/routes/routeGuards.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/screens/InitErrorScreen.tsx",
-          "frontend/src/hooks/useSession.ts",
-          "frontend/src/routes/routeGuards.tsx",
-          "frontend/src/components/layouts/PublicLayout.tsx"
+          "frontend/src/components/StartupGate.tsx",
+          "frontend/src/components/screens/StartupStatusScreen.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/routes/routeGuards.tsx"
         ]
       }
     ]
@@ -69,13 +73,10 @@
     "frontend/index.html",
     "frontend/src/App.tsx",
     "frontend/src/components/AppErrorBoundary.tsx",
-    "frontend/src/components/layouts/PublicLayout.tsx",
-    "frontend/src/components/nav/PublicHeader.tsx",
+    "frontend/src/components/StartupGate.tsx",
     "frontend/src/components/screens/AppErrorFallback.tsx",
-    "frontend/src/components/screens/InitErrorScreen.tsx",
-    "frontend/src/hooks/useSession.ts",
-    "frontend/src/pages/NotFound.tsx",
-    "frontend/src/pages/public/Home.tsx",
+    "frontend/src/components/screens/StartupStatusScreen.tsx",
+    "frontend/src/index.css",
     "frontend/src/routes/routeGuards.tsx",
     "frontend/src/utils/assetUrl.ts",
     "project_state.json",

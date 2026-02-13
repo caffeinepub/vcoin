@@ -1,93 +1,108 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix mobile blank/black preview by hardening base-path routing, asset URLs, and surfacing initialization errors",
+  "title": "Fix blank deployed preview and make routing/assets base-path safe",
   "requirements": [
     {
-      "id": "REQ-19",
-      "summary": "Fix mobile deployed preview blank/black screen so public Home renders at `/` and public routes don’t hang; ensure initial render failures show visible error UI.",
+      "id": "REQ-22",
+      "summary": "Ensure the public Home page renders visible content at `/` in deployed preview (desktop + mobile) and eliminate blank-screen startup scenarios.",
       "acceptanceCriteria": [
-        "Opening the deployed preview URL on a mobile browser renders the Public Header and Home hero section (logo, headline, buttons) instead of a blank/black screen.",
-        "No infinite loading state occurs on the public routes (`/`, `/whitepaper`, `/smart-contract`, `/roadmap`).",
-        "Any runtime error during initial render results in a visible error UI (not a blank screen)."
+        "When opening the deployed preview at `/`, the Public Home page renders visible content (hero section, header, etc.) instead of a blank/black screen.",
+        "The fix works on mobile browsers as well as desktop.",
+        "If an unexpected runtime error occurs during startup, the user sees an English error fallback screen (not a blank page)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Harden TanStack Router initialization so `/` reliably resolves to the Public Home route in deployed preview builds; also wire a top-level startup gate so the app always renders a visible screen before the first route paints. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/StartupGate.tsx",
+          "operation": "create",
+          "description": "Create a small top-level wrapper that guarantees something visible is rendered immediately (startup loading state) and that can switch to an English error state if startup cannot proceed, without exposing sensitive technical details. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/screens/StartupStatusScreen.tsx",
+          "operation": "create",
+          "description": "Create a full-page, mobile-friendly status UI used by StartupGate (Loading + Error variants) with an English message and a 'Reload' action. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/AppErrorBoundary.tsx",
+          "operation": "modify",
+          "description": "Ensure the error boundary fallback remains user-visible and is used for unexpected runtime errors during startup (no blank screen). Keep user-facing messaging in English and do not display stack traces or internal IDs. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add minimal global resilience styles to reduce chances of an all-black/blank viewport on mobile (e.g., ensure html/body/#root take full height and keep background/text colors applied consistently). Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-23",
+      "summary": "Make deployed preview base-path safe so router matching and static assets load correctly under non-root subpaths.",
+      "acceptanceCriteria": [
+        "In production/deployed preview, the HTML entry point references the favicon and the main script in a way that works under non-root base paths (no broken asset/script URLs).",
+        "TanStack Router correctly matches `/` to the public Home route in the deployed preview environment (no blank screen due to route mismatch).",
+        "Static generated assets referenced via `assetUrl(...)` (e.g., `assets/generated/vcoin-hero-bg.dim_1920x1080.png` and `assets/generated/vcoin-logo.dim_512x512.png`) load successfully in deployed preview (no missing-image failures that prevent rendering)."
       ],
       "file_operations": [
         {
           "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Remove hardcoded absolute root paths that break when hosted under a non-root base path (e.g., make the module script and favicon references base-path-safe) so JS/CSS load correctly in deployed previews."
-        },
-        {
-          "path": "frontend/src/utils/assetUrl.ts",
-          "operation": "create",
-          "description": "Add a small utility to build base-path-safe static asset URLs (prefix with the build-time base URL) to prevent missing images from contributing to a blank/black first paint on mobile."
-        },
-        {
-          "path": "frontend/src/pages/public/Home.tsx",
-          "operation": "modify",
-          "description": "Update hero background/logo references to use the base-path-safe asset URL helper instead of absolute-root URLs, ensuring the Home hero renders in deployed previews hosted under subpaths."
-        },
-        {
-          "path": "frontend/src/components/nav/PublicHeader.tsx",
-          "operation": "modify",
-          "description": "Update any logo/image/static asset references to use the base-path-safe asset URL helper so the Public Header renders reliably in deployed previews hosted under subpaths."
-        },
-        {
-          "path": "frontend/src/components/AppErrorBoundary.tsx",
-          "operation": "modify",
-          "description": "Enhance the error boundary to display a clear, user-facing fallback for any render-time exceptions (keep English text; avoid leaking stack traces) and ensure the fallback is always visible on mobile."
-        }
-      ]
-    },
-    {
-      "id": "REQ-20",
-      "summary": "Harden TanStack Router initialization for deployed base paths, direct-refresh navigation, and add a user-friendly Not Found route.",
-      "acceptanceCriteria": [
-        "Navigating directly to `/`, `/login`, `/register`, `/user`, and `/admin` works via browser refresh in the deployed preview (no blank screen).",
-        "If a user navigates to an unknown route, a Not Found screen is rendered with clear English text and a link back to Home.",
-        "Router initialization does not throw (and does not depend on undeclared globals) in production builds."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/NotFound.tsx",
-          "operation": "create",
-          "description": "Create a simple Not Found screen with clear English text and a link back to Home."
+          "description": "Update the HTML entry to be base-path safe for preview URLs: ensure favicon reference works under subpaths by wiring it via the correct base handling, and ensure the main module script reference is also base-path safe. Must reference the generated favicon at frontend/public/assets/generated/vcoin-favicon.dim_64x64.png. Verify the component's usage instructions before implementing."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Update TanStack Router setup to be base-path-aware in production builds and add a catch-all Not Found route wired into the route tree; also move router creation into a safe initialization path so failures show a visible error UI instead of causing a blank screen."
+          "description": "Normalize and apply the correct base path when creating the TanStack Router so deployed previews hosted under a subpath still match `/` to the public home route tree. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/assetUrl.ts",
+          "operation": "modify",
+          "description": "Harden `assetUrl(...)` so it reliably generates production-safe URLs under non-root base paths without producing double slashes or incorrect absolute paths; ensure it continues to work for generated assets like frontend/public/assets/generated/vcoin-hero-bg.dim_1920x1080.png and frontend/public/assets/generated/vcoin-logo.dim_512x512.png. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/public/Home.tsx",
+          "operation": "modify",
+          "description": "Validate that the Home hero background and logo use `assetUrl(...)` correctly so deployed preview subpaths load frontend/public/assets/generated/vcoin-hero-bg.dim_1920x1080.png and frontend/public/assets/generated/vcoin-logo.dim_512x512.png without missing-asset render failures. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/nav/PublicHeader.tsx",
+          "operation": "modify",
+          "description": "Validate the header logo uses `assetUrl(...)` correctly so the generated logo at frontend/public/assets/generated/vcoin-logo.dim_512x512.png loads under subpath deployments. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
-      "id": "REQ-21",
-      "summary": "Surface app-level initialization/auth failures with visible English UI and recovery actions; avoid indefinite protected-route loading states.",
+      "id": "REQ-24",
+      "summary": "Add a guaranteed English startup loading/error UI so users never see a blank screen during initialization or unexpected startup failure.",
       "acceptanceCriteria": [
-        "If Internet Identity initialization fails, the user sees a visible error message and a reload button instead of a blank screen.",
-        "If protected routes are loading authentication/actor state, a visible loading UI is shown; it must not get stuck indefinitely without showing either the destination page or an error message.",
-        "All user-facing error text is in English and does not leak stack traces or sensitive details."
+        "If the app is initializing (before routes render), a visible full-page loading or status UI is shown.",
+        "If startup fails in a way not caught by existing guards, a visible English error UI with a 'Reload' action is shown instead of a blank screen.",
+        "No sensitive details (stack traces, internal IDs) are displayed to end users in these states."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/screens/InitErrorScreen.tsx",
+          "path": "frontend/src/components/StartupGate.tsx",
           "operation": "create",
-          "description": "Add a dedicated, user-friendly initialization error screen (English text) with a reload action; do not display stack traces or sensitive details."
+          "description": "Implement a global startup state controller that shows an immediate full-page loading UI, then renders the app routes; if a startup failure is detected (e.g., unexpected initialization error), switch to a generic English error UI with a Reload action and no sensitive details. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/hooks/useSession.ts",
+          "path": "frontend/src/components/screens/StartupStatusScreen.tsx",
+          "operation": "create",
+          "description": "Implement the user-visible English Loading/Error screen used by StartupGate, including a 'Reload' action that refreshes the page, ensuring the UI is visible on mobile and desktop. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Harden session derived state to account for Internet Identity initialization failures (e.g., treat presence of `loginError` as an error state even if status becomes idle) and to prevent indefinite loading when the user is not authenticated or initialization failed."
+          "description": "Wire StartupGate into the top-level app composition (above the routed content) so a visible status screen is always shown during initialization and cannot result in a blank page. Verify the component's usage instructions before implementing."
         },
         {
           "path": "frontend/src/routes/routeGuards.tsx",
           "operation": "modify",
-          "description": "Update UserGuard/AdminGuard to (1) show InitErrorScreen when initialization/auth fails, (2) show a clear loading state only while a meaningful auth/actor resolution is in progress, and (3) avoid returning `null` in a way that can appear as a blank screen."
-        },
-        {
-          "path": "frontend/src/components/layouts/PublicLayout.tsx",
-          "operation": "modify",
-          "description": "Add a non-blocking, visible banner/inline notice when Internet Identity initialization fails (with reload action) so public pages remain accessible while still surfacing the failure to users."
+          "description": "Adjust guard behavior to avoid returning `null` in any transitional auth/routing state that could produce a blank screen; ensure any temporary state renders a visible English loading/status UI (without exposing sensitive details). Verify the component's usage instructions before implementing."
         }
       ]
     }

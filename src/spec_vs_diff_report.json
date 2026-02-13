@@ -1,43 +1,29 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T23:00:23.372Z",
-  "summary": "Diff adds base-path-safe asset URL helper, introduces Not Found and initialization error UIs, adjusts public header/home assets to use base URL, and updates route guards/session logic to surface loading/error states instead of blank screens. However, evidence for hardened router base-path initialization and global app-level error boundary wiring is incomplete due to truncation.",
+  "generatedAt": "2026-02-13T23:07:15.825Z",
+  "summary": "The diff adds visible startup/loading and error fallback UIs (StartupGate, StartupStatusScreen, AppErrorBoundary/AppErrorFallback) and improves base-path-safe asset URL generation via assetUrl(). However, the HTML entry point still hardcodes root-relative asset and script URLs, which is not base-path safe for deployed previews hosted under a subpath.",
   "missing_requirements": [
     {
-      "id": "REQ-20",
-      "requirement": "Harden TanStack Router initialization so route matching works correctly in the deployed environment, including when hosted under a non-root base path, and ensure router initialization does not throw in production builds.",
-      "reason": "Although a Not Found component and route definitions are shown, the diff snippet does not provide explicit evidence that the router is configured with a non-root base path (e.g., via a basepath option) or that initialization is guarded against undeclared globals/production-only failures. The referenced App.tsx portion that would show createRouter configuration is truncated.",
+      "id": "REQ-23",
+      "requirement": "Make the app deployment/base-path safe so route matching and static assets load correctly when hosted under a non-root subpath, including fixing base-URL handling in the HTML entry point.",
+      "reason": "The modified HTML entry still uses root-relative URLs for the favicon and the main script (leading '/'), which will break when the app is served from a non-root subpath (e.g., /preview/...); the diff does not show these being changed to use a base-aware path (e.g., relative URLs or Vite BASE_URL).",
       "evidence": [
-        "frontend/src/App.tsx (truncated)",
-        "frontend-file-summaries.txt (mentions base path support but no shown code)"
-      ]
-    },
-    {
-      "id": "REQ-19",
-      "requirement": "Any runtime error during initial render results in a visible error UI (not a blank screen).",
-      "reason": "An AppErrorBoundary and fallback UI are added/modified, but the diff excerpt does not show AppErrorBoundary actually wrapping the router/app root during initial render. Without that wiring visible in the provided snippet, it’s not verifiable that initial render errors will surface a visible error UI.",
-      "evidence": [
-        "frontend/src/components/AppErrorBoundary.tsx",
-        "frontend/src/components/screens/AppErrorFallback.tsx",
-        "frontend/src/App.tsx (truncated)"
+        "frontend/index.html"
       ]
     }
   ],
   "hallucinated_features": [],
-  "confidence": 0.56,
+  "confidence": 0.74,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/index.html",
     "frontend/src/App.tsx",
     "frontend/src/components/AppErrorBoundary.tsx",
-    "frontend/src/components/layouts/PublicLayout.tsx",
-    "frontend/src/components/nav/PublicHeader.tsx",
+    "frontend/src/components/StartupGate.tsx",
     "frontend/src/components/screens/AppErrorFallback.tsx",
-    "frontend/src/components/screens/InitErrorScreen.tsx",
-    "frontend/src/hooks/useSession.ts",
-    "frontend/src/pages/NotFound.tsx",
-    "frontend/src/pages/public/Home.tsx",
+    "frontend/src/components/screens/StartupStatusScreen.tsx",
+    "frontend/src/index.css",
     "frontend/src/routes/routeGuards.tsx",
     "frontend/src/utils/assetUrl.ts",
     "project_state.json"

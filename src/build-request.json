@@ -1,72 +1,71 @@
 {
   "kind": "build_request",
-  "title": "Fix deployed preview showing blank/black screen on mobile",
+  "title": "Fix deployed preview still showing a blank screen (ensure visible Home page at /)",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-19",
-      "text": "Investigate and fix the deployed preview rendering as a blank/black screen (as shown in the uploaded screenshot) so that the public Home page content is visible at `/` on mobile browsers.",
+      "id": "REQ-22",
+      "text": "Investigate and fix the deployed preview rendering a completely blank page so that the public Home page content is visible at the root path `/` (including on mobile browsers).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Preview me bs asa dikh rha h"
+          "Abhi bhi wahi pura blank hi dikh rha h"
         ]
       },
       "acceptanceCriteria": [
-        "Opening the deployed preview URL on a mobile browser renders the Public Header and Home hero section (logo, headline, buttons) instead of a blank/black screen.",
-        "No infinite loading state occurs on the public routes (`/`, `/whitepaper`, `/smart-contract`, `/roadmap`).",
-        "Any runtime error during initial render results in a visible error UI (not a blank screen)."
+        "When opening the deployed preview at `/`, the Public Home page renders visible content (hero section, header, etc.) instead of a blank/black screen.",
+        "The fix works on mobile browsers as well as desktop.",
+        "If an unexpected runtime error occurs during startup, the user sees an English error fallback screen (not a blank page)."
       ]
     },
     {
-      "id": "REQ-20",
-      "text": "Harden TanStack Router initialization so route matching works correctly in the deployed environment, including when hosted under a non-root base path, and add a user-friendly Not Found route for unmatched paths.",
+      "id": "REQ-23",
+      "text": "Make the app deployment/base-path safe so route matching and static assets load correctly when hosted under a non-root subpath (e.g., preview URLs), including fixing base-URL handling in the HTML entry and router initialization if needed.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Preview me bs asa dikh rha h"
+          "Abhi bhi wahi pura blank hi dikh rha h"
         ]
       },
       "acceptanceCriteria": [
-        "Navigating directly to `/`, `/login`, `/register`, `/user`, and `/admin` works via browser refresh in the deployed preview (no blank screen).",
-        "If a user navigates to an unknown route, a Not Found screen is rendered with clear English text and a link back to Home.",
-        "Router initialization does not throw (and does not depend on undeclared globals) in production builds."
+        "In production/deployed preview, the HTML entry point references the favicon and the main script in a way that works under non-root base paths (no broken asset/script URLs).",
+        "TanStack Router correctly matches `/` to the public Home route in the deployed preview environment (no blank screen due to route mismatch).",
+        "Static generated assets referenced via `assetUrl(...)` (e.g., `assets/generated/vcoin-hero-bg.dim_1920x1080.png` and `assets/generated/vcoin-logo.dim_512x512.png`) load successfully in deployed preview (no missing-image failures that prevent rendering)."
       ]
     },
     {
-      "id": "REQ-21",
-      "text": "Ensure app-level failures are always surfaced to users: if Internet Identity initialization fails or an unexpected error occurs before protected routes can resolve, display a visible English error state with a recovery action (e.g., reload).",
+      "id": "REQ-24",
+      "text": "Add a guaranteed, user-visible English startup status state so the UI never appears completely blank while the app is initializing or if routing cannot render for any reason (without exposing sensitive technical details).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "Preview me bs asa dikh rha h"
+          "Abhi bhi wahi pura blank hi dikh rha h"
         ]
       },
       "acceptanceCriteria": [
-        "If Internet Identity initialization fails, the user sees a visible error message and a reload button instead of a blank screen.",
-        "If protected routes are loading authentication/actor state, a visible loading UI is shown; it must not get stuck indefinitely without showing either the destination page or an error message.",
-        "All user-facing error text is in English and does not leak stack traces or sensitive details."
+        "If the app is initializing (before routes render), a visible full-page loading or status UI is shown.",
+        "If startup fails in a way not caught by existing guards, a visible English error UI with a 'Reload' action is shown instead of a blank screen.",
+        "No sensitive details (stack traces, internal IDs) are displayed to end users in these states."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (Shadcn components are read-only).",
-    "Do not edit immutable hook paths: frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx.",
-    "Backend must remain single-actor in backend/main.mo; do not introduce additional canisters/services."
+    "Do not edit files in frontend immutable paths: `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, `frontend/src/components/ui/*`.",
+    "Keep all user-facing text in English.",
+    "Backend must remain a single Motoko actor; do not introduce additional backend services."
   ],
   "nonGoals": [
-    "Do not add new presale/business features (wallets, new pages, new admin tools) as part of this fix.",
-    "Do not change branding/theme/colors except as needed to resolve visibility/rendering issues.",
-    "Do not introduce third-party auth providers beyond Internet Identity."
+    "Adding new product features unrelated to fixing the blank screen issue.",
+    "Introducing third-party auth providers or external hosting/services."
   ],
   "imageRequirements": {
     "required": [],

@@ -13,5 +13,11 @@ export function assetUrl(path: string): string {
   
   // In production, use the base URL from Vite config
   const base = import.meta.env.BASE_URL || '/';
-  return `${base}${cleanPath}`.replace(/\/+/g, '/');
+  
+  // Normalize base path (remove trailing slash if not root)
+  const normalizedBase = base === '/' ? '/' : `/${base.replace(/^\/+|\/+$/g, '')}/`;
+  
+  // Combine and clean up any double slashes
+  const fullPath = `${normalizedBase}${cleanPath}`;
+  return fullPath.replace(/([^:]\/)\/+/g, '$1');
 }

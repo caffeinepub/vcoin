@@ -2,6 +2,7 @@ import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet } fr
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
 import AppErrorBoundary from './components/AppErrorBoundary';
+import StartupGate from './components/StartupGate';
 import PublicLayout from './components/layouts/PublicLayout';
 import UserDashboardLayout from './components/layouts/UserDashboardLayout';
 import AdminDashboardLayout from './components/layouts/AdminDashboardLayout';
@@ -198,10 +199,17 @@ const routeTree = rootRoute.addChildren([
   ]),
 ]);
 
-// Create router with base path support for production builds
+// Normalize base path for production builds
+function getBasePath(): string {
+  const base = import.meta.env.BASE_URL || '/';
+  // Ensure it starts with / and ends with / for consistency
+  return base === '/' ? '/' : `/${base.replace(/^\/+|\/+$/g, '')}/`;
+}
+
+// Create router with normalized base path
 const router = createRouter({
   routeTree,
-  basepath: import.meta.env.BASE_URL || '/',
+  basepath: getBasePath(),
   defaultPreload: 'intent',
 });
 
@@ -214,7 +222,9 @@ declare module '@tanstack/react-router' {
 export default function App() {
   return (
     <AppErrorBoundary>
-      <RouterProvider router={router} />
+      <StartupGate>
+        <RouterProvider router={router} />
+      </StartupGate>
     </AppErrorBoundary>
   );
 }

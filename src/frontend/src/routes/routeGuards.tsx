@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import AccessDeniedScreen from '../components/screens/AccessDeniedScreen';
 import InitErrorScreen from '../components/screens/InitErrorScreen';
+import { Loader2 } from 'lucide-react';
 
 export function UserGuard({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading, hasInitError, isInitializing } = useSession();
@@ -20,21 +21,28 @@ export function UserGuard({ children }: { children: ReactNode }) {
     return <InitErrorScreen />;
   }
 
-  // Show loading only while actively resolving auth state
+  // Show visible loading state while actively resolving auth state
   if (isLoading || isInitializing) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Don't render anything while redirecting
+  // Show visible loading state while redirecting (avoid blank screen)
   if (!isAuthenticated) {
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Redirecting...</p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;
@@ -55,12 +63,12 @@ export function AdminGuard({ children }: { children: ReactNode }) {
     return <InitErrorScreen />;
   }
 
-  // Show loading only while actively resolving auth state
+  // Show visible loading state while actively resolving auth state
   if (isLoading || isInitializing) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -77,7 +85,14 @@ export function AdminGuard({ children }: { children: ReactNode }) {
     const currentPath = window.location.pathname;
     if (currentPath !== '/admin/settings') {
       navigate({ to: '/admin/settings' });
-      return null;
+      return (
+        <div className="flex items-center justify-center min-h-screen bg-background">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Redirecting...</p>
+          </div>
+        </div>
+      );
     }
   }
 
