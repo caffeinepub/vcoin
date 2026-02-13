@@ -1,0 +1,349 @@
+{
+  "kind": "build_request",
+  "title": "VCoin Web2-style Presale Website with User Dashboard + Admin Panel (Manual Control)",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Build a full working VCoin website with two protected areas: (1) User Panel and (2) Admin Panel, all backed by Motoko canister storage. The system must be Web2-style (no on-chain smart contracts, no wallet integrations) but should feel realistic and production-like.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Ye only ek website me nd dikhane k liye sara kuch manually admin se hi control hoga",
+          "mujhe fully working project chahiye se with bechend support n calculation or admin login",
+          "Ok bna kr do apne hisab se bs secured ho",
+          "Ok retry"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Users can register/login and access a user dashboard with sidebar navigation.",
+        "Admins can login and access an admin dashboard with sidebar navigation.",
+        "All core entities (users, deposits, presale stage config, wallet address config, token balances, referral rewards) persist in the backend canister and survive page refreshes."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement authentication and role-based access control: users can only access their own data; admins can access global controls. Include a secure initial admin account with email \"admin@vcoin.com\" and password \"Srkkhan786@\", and require the admin to change the password after first successful login.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Default Secure Admin Login Email: admin@vcoin.com Password: Srkkhan786@ (Must be changeable from admin settings in production)",
+          "admin login dhyan se dalna suru se h"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User endpoints reject requests that try to read/modify other users’ records.",
+        "Admin-only endpoints reject non-admin callers.",
+        "Admin can change password from an Admin Settings screen; first-login password change is enforced before accessing other admin pages."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Implement secure registration and anti-duplicate registration controls without email/OTP verification: enforce unique email (case-insensitive) and add an additional anti-duplicate mechanism using a stored client fingerprint (browser-generated stable ID) plus backend-side rate limits per fingerprint and per IP-equivalent signal available from the platform (if any). Provide clear English error messages when blocked.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "To uske alawa koi registration k time or option h jo log double bar register na kr le",
+          "Ok bna kr do apne hisab se bs secured ho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Attempting to register with an already-used email is blocked with an English message.",
+        "Rapid repeated registrations from the same fingerprint are blocked (rate limited).",
+        "Registration stores a fingerprint identifier and timestamp(s) used for duplicate detection.",
+        "The UI communicates why registration failed (e.g., email already used / too many attempts)."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Create a professional, consistent UI/UX for the public site, user panel, and admin panel with a single coherent visual theme (colors, typography, spacing, components). Include a collapsible one-click open/close sidebar for both user and admin dashboards.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "admin panel n user pannel acha bnana ui k sath sidebar one click open close wala ho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User dashboard has a sidebar that can collapse/expand with one click and remains usable on mobile.",
+        "Admin dashboard has a sidebar that can collapse/expand with one click and remains usable on mobile.",
+        "All pages share a consistent theme (no mismatched styling between sections)."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement presale stages and purchase calculations (informational/off-chain): Stage 1 ($0.05, 80M), Stage 2 ($0.08, 70M), Stage 3 ($0.12, 50M). The Buy VCoin page must calculate required USDT amount from selected VCN quantity and current stage price; show remaining stage supply based on approved sales; and prevent buys beyond remaining supply.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Stage 1 Price: $0.05 Supply: 80M ... Stage 2 ... Stage 3 ...",
+          "Token quantity selection → Automatic USDT TRC-20 amount calculation"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin can set the current stage and/or override price in admin controls; users see the current values on Buy page.",
+        "Buy page calculates USDT = VCN quantity × current price and updates live as the user edits quantity.",
+        "Approved purchases reduce remaining stage supply; remaining supply is displayed.",
+        "System blocks submissions that would exceed remaining supply."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Add an admin-controlled USDT wallet address setting. The Buy VCoin page must always display the latest wallet address from backend configuration, and reflect changes immediately after refresh (no hardcoded address).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Admin k pas wallet address change n update kr skte h user ko instant show hoga buy krte time"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin can update the wallet address in Admin Settings.",
+        "Buy page reads the wallet address from backend and displays it.",
+        "After admin updates the address, users see the updated address on Buy page after a reload (and during the same session if data is refetched)."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Implement the manual deposit submission flow: user submits (1) transaction hash and (2) payment screenshot upload, tied to a buy intent (quantity, price, USDT amount, stage). Store deposit as Pending until admin verification. Provide user Deposit History with statuses: Pending/Approved/Rejected and admin reason for rejection.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "User submits: Transaction Hash, Payment Screenshot",
+          "Admin manual verification → Tokens credited"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can create a deposit record with tx hash + screenshot and see it in Deposit History as Pending.",
+        "Admin can view all pending deposits, open details, and Approve or Reject with a reason.",
+        "Rejected deposits show the rejection reason to the user in English.",
+        "Approved deposits are immutable (cannot be edited by the user)."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "On admin approval of a deposit, credit tokens to the user and compute referral rewards. Maintain user balances as Locked until the configured launch date/year (2027). Display user Token Balance (Locked/Unlocked) and a simple Vesting Progress page that shows monthly unlock schedule starting post-launch (calculation-only).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Tokens remain locked until 2027 launch.",
+          "Post-Launch Phase (2027) - Monthly vesting release",
+          "Token Balance (Locked/Unlocked)",
+          "Vesting Progress"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Approving a deposit increases the user’s locked VCN balance by the purchased amount plus any referral bonuses.",
+        "Before launch, unlocked balance remains 0 and UI indicates balances are locked until 2027.",
+        "Vesting Progress shows a clear English explanation and a month-by-month breakdown (or summary) of unlock amounts once launch is reached/configured.",
+        "Admin can configure the launch timestamp/year and vesting parameters used for the schedule calculation."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Implement referral system with auto referral code generation per user and multi-level reward calculations up to 5 levels. Apply: direct referral bonus 10% extra VCN to the buyer (if referred), and MLM rewards to uplines: L1 10%, L2 5%, L3 1%, L4 0.5%, L5 0.5%. Rewards must be credited as Locked tokens and shown in Referral Earnings.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Auto referral code generation",
+          "Direct Referral Users earn 10% extra VCN tokens",
+          "Multi-Level Rewards (5 Levels) Level 1 → 10% ... Level 5 → 0.5%"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each user has a unique referral code and a shareable referral link.",
+        "New users can register with an optional referral code; the referral relationship is stored immutably after registration.",
+        "When a deposit is approved, referral bonuses are computed and credited as Locked tokens to the appropriate accounts up to 5 levels.",
+        "User can view Referral Earnings totals and a per-event breakdown (who/level/amount/date)."
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Create a Referral Network Tree view in the user dashboard showing downline structure up to at least 5 levels (paginated or expandable for performance).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Referral Network Tree"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can open a Referral Network page and see their direct referrals and deeper levels up to level 5.",
+        "UI remains responsive for larger trees (uses pagination/expansion rather than rendering everything at once)."
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Admin dashboard metrics and controls: show total registered users, total tokens sold (approved), total USDT collected (approved), current stage, and count of pending verifications. Provide admin tools to: switch stage, update price, manual token credit/debit per user, manage/override referral reward entries for a user, and create announcement popups shown to users.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Admin Dashboard Metrics - Total registered users, Total tokens sold, Total USDT collected, Current presale stage, Pending payment verifications",
+          "Core Admin Controls - Token price update, Presale stage switching, Manual token credit/debit, Deposit approve / reject, Referral reward management, ... Announcement popup system"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin home shows the requested metrics computed from backend data.",
+        "Admin can change stage/price and it affects new buy calculations immediately after refresh.",
+        "Admin can credit/debit a user’s locked balance with an audit note and it appears in that user’s history.",
+        "Admin can create/edit/disable an announcement; users see active announcements on login/dashboard."
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Add public informational pages with readable English content based on the provided document: Whitepaper-style overview (Vision/Mission, Tokenomics, Presale Stages, Lock/Vesting, Security, Legal/Risk), Smart Contract Architecture (descriptive only, no actual blockchain code), and Roadmap (2025–2030).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "proper smart contract n white paper roadmap likh dena taki koi bhi padh sake best bna kr do"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Public navigation includes pages for Whitepaper, Smart Contract Architecture (informational), and Roadmap.",
+        "All content is in English and formatted for readability (sections, headings, lists).",
+        "Content clearly states the app is a manual/off-chain presale management website (no on-chain execution)."
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Implement file upload handling for payment screenshots: accept common image formats, validate file size, store the image as a stable asset reference retrievable by admins for review, and show a thumbnail/preview in both user history and admin review screens.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Payment Screenshot"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Upload rejects unsupported formats and oversized files with English errors.",
+        "User can preview the uploaded screenshot for their deposit record.",
+        "Admin can view the screenshot for each pending deposit."
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Add an audit trail for sensitive admin actions (approve/reject deposit, stage/price changes, wallet address changes, manual credit/debit, referral overrides, announcement changes) including who (admin principal), what, when, and before/after values where applicable.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "All presale operations remain manual & fully controllable.",
+          "bs secured ho"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each sensitive admin action creates an immutable audit record in backend storage.",
+        "Admin can view audit logs in the admin UI with filters by action type/date.",
+        "Audit entries include timestamp and admin identity."
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Provide clear English status and error messaging across the app (registration blocks, deposit status, locked tokens, vesting availability, admin actions).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Use English for any user-facing text in the build request."
+        ]
+      },
+      "acceptanceCriteria": [
+        "All user-visible UI strings are in English.",
+        "Major flows (registration, buy/deposit submission, approvals, balances) show clear success/error states."
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Add generated static brand assets and use them in the UI: VCoin logo, favicon, and a subtle dashboard/public hero background illustration. Store these in frontend/public/assets/generated and reference them directly from the frontend.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "website n detail ase bnana sb real lage or ... ui"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated and are used in header/login pages/dashboard.",
+        "No image generation is routed through the backend.",
+        "Logo appears crisp on light and dark backgrounds."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not implement real TRC-20/ERC-20 smart contracts, blockchain transactions, or wallet integrations; all presale logic is manual/off-chain.",
+    "Do not implement email verification or mobile OTP verification.",
+    "Backend must remain a single Motoko actor in backend/main.mo (no multi-service backend).",
+    "Frontend must not modify any files under frontend immutablePaths; compose UI using existing components instead."
+  ],
+  "nonGoals": [
+    "Automatic on-chain token distribution or any on-chain claims.",
+    "Real-time features via WebSockets/push notifications.",
+    "Integration with third-party auth providers (only Internet Identity is supported, but is not required by this request).",
+    "External databases or non-IC backend services."
+  ],
+  "imageRequirements": {
+    "required": [
+      "VCoin token-style circular logo with 'VCN' monogram, metallic gold on dark background (vcoin-logo.dim_512x512.png)",
+      "Simple favicon version of the VCoin mark, high contrast (vcoin-favicon.dim_64x64.png)",
+      "Abstract futuristic finance background with subtle grid and light streaks, dark theme (vcoin-hero-bg.dim_1920x1080.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [
+      "Build a Web2-style presale website with user/admin dashboards, manual deposit verification, referral rewards, and vesting calculations (no blockchain integration)."
+    ],
+    "goalsToRemove": [],
+    "preferencesToAdd": [
+      "Prefer a professional UI with collapsible sidebar for user and admin panels."
+    ],
+    "preferencesToRemove": [],
+    "miscToAdd": [
+      "Cannot use email or OTP verification; must prevent duplicate registrations via unique email and device/fingerprint-based protections."
+    ],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}
